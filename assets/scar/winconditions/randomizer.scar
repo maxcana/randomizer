@@ -95,15 +95,16 @@ function RND_PreInit()
 			reload = RND_Rand(0.1, 2.0),
 			wind_down = RND_Rand(0.6, 1.4),
 			cooldown = RND_Rand(0.1, 2.0),
+			burst_rate = RND_Rand(0.5, 2.0),
 		}
 		for _, player in pairs(PLAYERS) do
 			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "damage_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "range_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_burst_rate_of_fire_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "range_weapon_modifier", MUT_Multiplication, false, rates.range, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.reload, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.cooldown, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.accuracy, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.wind_down, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_burst_rate_of_fire_modifier", MUT_Multiplication, false, rates.burst_rate, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
 		end
 	end
 	
@@ -130,10 +131,10 @@ function RND_ApplyUpgradeBonus(bps)
 				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
 			},
 			cost_additive = {
-				food = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.05),
-				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.05),
-				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.05),
-				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.05),
+				food = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
+				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
+				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
+				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
 			},
 			production_speed_modifier = RND_Rand(0.0, 2.0) + 5 * RND_Chance(0.15)
 		}
