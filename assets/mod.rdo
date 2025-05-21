@@ -1,0 +1,28 @@
+<DataWarehouse>
+	<!--Mod/-->
+	<DataObject Name="randomizer" Type="Mod" Id="11623340612197657371" Version="1">
+		<DataProperty Name="m_description" Type="Object">
+			<DataValue Name="util::ReflectLocString">2262044461075167495</DataValue>
+			<!--Mod/util::ReflectLocString/-->
+			<DataObject Name="" Type="util::ReflectLocString" Id="2262044461075167495" OwnerId="11623340612197657371">
+				<DataProperty Name="m_modPart2" Type="UInt32" Value="2511707013"/>
+				<DataProperty Name="m_modPart3" Type="UInt32" Value="2305036975"/>
+				<DataProperty Name="m_modPart0" Type="UInt32" Value="108883170"/>
+				<DataProperty Name="m_modPart1" Type="UInt32" Value="1266050614"/>
+				<DataProperty Name="m_locStringKey" Type="Int32" Value="2"/>
+			</DataObject>
+		</DataProperty>
+		<DataProperty Name="m_name" Type="Object">
+			<DataValue Name="util::ReflectLocString">5703826279864252774</DataValue>
+			<!--Mod/util::ReflectLocString/-->
+			<DataObject Name="" Type="util::ReflectLocString" Id="5703826279864252774" OwnerId="11623340612197657371">
+				<DataProperty Name="m_modPart2" Type="UInt32" Value="2511707013"/>
+				<DataProperty Name="m_modPart3" Type="UInt32" Value="2305036975"/>
+				<DataProperty Name="m_modPart0" Type="UInt32" Value="108883170"/>
+				<DataProperty Name="m_modPart1" Type="UInt32" Value="1266050614"/>
+				<DataProperty Name="m_locStringKey" Type="Int32" Value="1"/>
+			</DataObject>
+		</DataProperty>
+	</DataObject>
+</DataWarehouse>
+
