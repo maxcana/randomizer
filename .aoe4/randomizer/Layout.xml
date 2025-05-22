@@ -3,20 +3,17 @@
   <RootPanel Orientation="Horizontal">
     <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="300" FloatingWidth="300" FloatingHeight="800" FloatingLeft="200" FloatingTop="200">
       <LayoutAnchorablePane DockHeight="200" FloatingWidth="300" FloatingHeight="800" FloatingLeft="200" FloatingTop="200">
-        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Asset Explorer" IsSelected="True" ContentId="EssenceEditor.AssetExplorer" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 17:25:48" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Asset Explorer" IsSelected="True" ContentId="EssenceEditor.AssetExplorer" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 20:30:19" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
       </LayoutAnchorablePane>
     </LayoutAnchorablePaneGroup>
     <LayoutPanel Orientation="Vertical">
       <LayoutDocumentPaneGroup Orientation="Horizontal">
         <LayoutDocumentPane Id="ab966aed-6c02-4905-b35d-6ed87d2902b9" DockWidth="1.44799176107106*">
           <LayoutDocument Title="Render" ContentId="EssenceEditor.Render" LastActivationTimeStamp="05/18/2025 23:22:41" />
-          <LayoutDocument Title="randomizer.scar" IsSelected="True" IsLastFocusedDocument="True" ContentId="FileName|Script|assets\scar\winconditions\randomizer.scar" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.scar" LastActivationTimeStamp="05/21/2025 17:05:19" />
+          <LayoutDocument Title="randomizer.scar" ContentId="FileName|Script|assets\scar\winconditions\randomizer.scar" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.scar" LastActivationTimeStamp="05/21/2025 20:30:17" />
           <LayoutDocument Title="Enums" ContentId="Attributes.Enums" FloatingLeft="-445" FloatingTop="106" FloatingWidth="1948" FloatingHeight="969" LastActivationTimeStamp="05/21/2025 16:57:04" PreviousContainerId="ab966aed-6c02-4905-b35d-6ed87d2902b9" PreviousContainerIndex="4" />
           <LayoutDocument Title="randomizer.rdo" ContentId="Reflect|Essence.Editor.ReflectEditor.Controls.DefaultReflectControlActivator|0x44BB783C1CA5FA44" LastActivationTimeStamp="05/21/2025 17:05:18" />
-          <LayoutDocument Title="ebps" ContentId="Category|ebps" LastActivationTimeStamp="05/21/2025 16:14:32" />
-          <LayoutDocument Title="upgrade" ContentId="Category|upgrade" LastActivationTimeStamp="05/21/2025 16:14:31" />
-          <LayoutDocument Title="weapon" ContentId="Category|weapon" LastActivationTimeStamp="05/21/2025 16:29:32" />
-          <LayoutDocument Title="mod.rdo" ContentId="Reflect|Essence.Editor.ReflectEditor.Controls.DefaultReflectControlActivator|0xA14E66B42569AB1B" LastActivationTimeStamp="05/21/2025 16:59:43" />
+          <LayoutDocument Title="mod.rdo" IsSelected="True" IsLastFocusedDocument="True" ContentId="Reflect|Essence.Editor.ReflectEditor.Controls.DefaultReflectControlActivator|0xA14E66B42569AB1B" LastActivationTimeStamp="05/21/2025 20:30:20" />
           <LayoutDocument Title="mod.png" ContentId="FileName|Image|assets\mod.png" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.png" LastActivationTimeStamp="05/21/2025 16:59:43" />
         </LayoutDocumentPane>
       </LayoutDocumentPaneGroup>
@@ -24,12 +21,12 @@
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Output" ContentId="Output" LastActivationTimeStamp="07/28/2020 09:55:16" />
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Error List" ContentId="ErrorList" LastActivationTimeStamp="05/21/2025 15:40:45" />
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Object Browser" ContentId="ScenarioEditor.ObjectBrowser" LastActivationTimeStamp="07/28/2020 09:55:15" />
-        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Find 'weapon_horseman_1_mon'" IsSelected="True" ContentId="FindResults" LastActivationTimeStamp="05/21/2025 15:46:37" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Find Results 1" IsSelected="True" ContentId="FindResults" LastActivationTimeStamp="05/21/2025 15:46:37" />
       </LayoutAnchorablePane>
     </LayoutPanel>
     <LayoutAnchorablePaneGroup Orientation="Vertical" DockWidth="300" DockHeight="200">
       <LayoutAnchorablePane Id="9fa6a278-3f40-4922-887c-23981b219ae4" DockWidth="300" FloatingWidth="300" FloatingHeight="800" FloatingLeft="200" FloatingTop="200">
-        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Properties" IsSelected="True" ContentId="EssenceEditor.Properties" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 15:53:18" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Properties" IsSelected="True" ContentId="EssenceEditor.Properties" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 20:31:16" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
       </LayoutAnchorablePane>
       <LayoutAnchorablePane Id="78c06263-eb86-40c1-8abf-6d89a3781df0" FloatingWidth="300" FloatingHeight="250" FloatingLeft="200" FloatingTop="200" />
       <LayoutAnchorablePaneGroup Orientation="Horizontal" DockHeight="0.25*" FloatingWidth="300" FloatingHeight="200" FloatingLeft="200" FloatingTop="200">
@@ -45,7 +42,7 @@
   <BottomSide />
   <FloatingWindows />
   <Hidden>
-    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Transformation" IsSelected="True" ContentId="ScenarioEditor.Transformation" FloatingLeft="200" FloatingTop="200" FloatingWidth="250" FloatingHeight="300" LastActivationTimeStamp="05/21/2025 14:52:13" PreviousContainerId="78c06263-eb86-40c1-8abf-6d89a3781df0" PreviousContainerIndex="0" />
-    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Painter" IsSelected="True" ContentId="ScenarioEditor.Painter" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 14:52:13" PreviousContainerId="9fa6a278-3f40-4922-887c-23981b219ae4" PreviousContainerIndex="1" />
+    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Transformation" IsSelected="True" ContentId="ScenarioEditor.Transformation" FloatingLeft="200" FloatingTop="200" FloatingWidth="250" FloatingHeight="300" LastActivationTimeStamp="05/21/2025 20:30:17" PreviousContainerId="78c06263-eb86-40c1-8abf-6d89a3781df0" PreviousContainerIndex="0" />
+    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Painter" IsSelected="True" ContentId="ScenarioEditor.Painter" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/21/2025 20:30:17" PreviousContainerId="9fa6a278-3f40-4922-887c-23981b219ae4" PreviousContainerIndex="1" />
   </Hidden>
 </LayoutRoot>

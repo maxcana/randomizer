@@ -10,7 +10,6 @@
 					<d2p1:Value>
 						<d2p1:string>assets\locdb</d2p1:string>
 						<d2p1:string>assets\scar\winconditions</d2p1:string>
-						<d2p1:string>assets\mod.png</d2p1:string>
 					</d2p1:Value>
 				</d2p1:KeyValueOfstringArrayOfstringty7Ep6D1>
 			</d3p1:ExpandedPaths>
@@ -23,8 +22,8 @@
 	</PluginSettings>
 	<RecentFiles>
 		<History xmlns:d3p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.png</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.rdo</d3p1:string>
+			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.png</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.rdo</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.scar</d3p1:string>
 		</History>
