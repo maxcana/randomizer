@@ -231,13 +231,14 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_olive_oil", rates.cost_additive.olive_oil)
 				end
 				
+				RND_ApplyMod(player.id, ebp, "armor_modifier", rates.armor_modifier)
+				RND_ApplyMod(player.id, ebp, "health_maximum_modifier", rates.health_maximum_modifier)
+				RND_ApplyMod(player.id, ebp, "sight_radius_modifier", rates.sight_radius_modifier)
+				
 				if(unit) then
 					RND_ApplyMod(player.id, ebp, "speed_maximum_modifier", rates.speed_maximum_modifier)
-					RND_ApplyMod(player.id, ebp, "armor_modifier", rates.armor_modifier)
-					RND_ApplyMod(player.id, ebp, "health_maximum_modifier", rates.health_maximum_modifier)
-					RND_ApplyMod(player.id, ebp, "sight_radius_modifier", rates.sight_radius_modifier)
 					
-					-- todo weapon modifiers
+					-- existing unit weapon modifiers
 					
 						--[[ local num_hardpoints = Entity_GetWeaponHardpointCount(ebp.EntityID)
 				    for hardpoint_index = 1, num_hardpoints do
