@@ -11,9 +11,7 @@ import("gameplay/diplomacy.scar")				-- Manages Tribute
 import("winconditions/annihilation.scar")   -- military conquest by eliminating all enemies
 import("winconditions/elimination.scar")    -- handles player drops/disconnect
 import("winconditions/surrender.scar")      -- surrender via UI
-import("winconditions/conquest.scar")       -- landmark destruction (original “Landmark Victory”)
-import("winconditions/wonder.scar")         -- Wonder defense victory
-import("winconditions/religious.scar")      -- Sacred site/reflic victory
+
 
 
 -- Import UI Support
@@ -66,6 +64,65 @@ RND_BP_UNIT_CLASS = "annihilation_condition" -- goofy ahh unit class name
 RND_BP_WORKER = "worker"
 RND_BP_BUILDING = "building"
 RND_BP_UPGRADE = "upgrade"
+RND_BP_GAIA = "gaia"
+
+RND_OPTIONS = {
+	win = { -- win conditions
+		la = true, -- landmark
+		sa = true, -- sacred
+		wo = true, -- wonder
+	},
+	mch = { -- match options
+		sc = false, -- show scores
+		ma = "concealed", -- map state
+		re = false -- reveal on elim
+	}
+}
+
+function RND_DealWithOptions()
+	local options = { }
+	Setup_GetWinConditionOptions(options)
+	
+	if not options then
+		return
+	end
+	
+	if options.section_win_conditions then
+		if options.section_win_conditions.option_win_condition_landmarks ~= nil then RND_OPTIONS.win.la = options.section_win_conditions.option_win_condition_landmarks end
+		if options.section_win_conditions.option_win_condition_sacred ~= nil then RND_OPTIONS.win.sa = options.section_win_conditions.option_win_condition_sacred end
+		if options.section_win_conditions.option_win_condition_wonder ~= nil then RND_OPTIONS.win.wo = options.section_win_conditions.option_win_condition_wonder end
+	end
+	
+	if options.section_match_options then
+		if options.section_match_options.option_match_option_scores ~= nil then RND_OPTIONS.mch.sc = options.section_match_options.option_match_option_scores end
+		if options.section_match_options.enum_map_state then
+			if options.section_match_options.enum_map_state.enum_value == options.section_match_options.enum_map_state.enum_items.map_state_concealed then
+				RND_OPTIONS.mch.ma = "concealed"
+			elseif options.section_match_options.enum_map_state.enum_value == options.section_match_options.enum_map_state.enum_items.map_state_explored then
+				RND_OPTIONS.mch.ma = "explored"
+			elseif options.section_match_options.enum_map_state.enum_value == options.section_match_options.enum_map_state.enum_items.map_state_revealed then
+				RND_OPTIONS.mch.ma = "revealed"
+			end
+		end
+		if options.section_match_options.option_reveal_on_elimination ~= nil then RND_OPTIONS.mch.re = options.section_match_options.option_reveal_on_elimination end
+	end
+end
+
+function RND_OnGameSetup()
+	RND_DealWithOptions()
+	
+	-- import necessary win conditions
+	
+	if RND_OPTIONS.win.la then
+		import("winconditions/conquest.scar")       -- landmark destruction (original “Landmark Victory”) 
+	end
+	if RND_OPTIONS.win.wo then
+		import("winconditions/wonder.scar")         -- Wonder defense victory
+	end
+	if RND_OPTIONS.win.sa then
+		import("winconditions/religious.scar")      -- Sacred site/reflic victory
+	end
+end
 
 -- Core OnInit
 function RND_PreInit()
@@ -86,6 +143,9 @@ function RND_PreInit()
 	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_BUILDING), true, false, false)
 	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_WORKER), false, true, true)
 	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_UNIT_CLASS), true, false, true)
+	
+	-- doesn't work properly
+	--RND_ApplyBonusToResourceDep(BP_GetEntityBlueprintsWithType(RND_BP_GAIA))
 	
 	for _, wpn_name in pairs(listOfAllWeapons) do
 		local rates = {
@@ -119,6 +179,74 @@ function RND_OnInit()
 				"chinese_upgrade", "byzantine_upgrade", "ayyubid_cmp_upgrade", "abbasid_ha_01_upgrade", "abbasid_upgrade",
 		})
 	)
+	
+	-- map vision
+	if RND_OPTIONS.mch.ma == "concealed" then 
+		
+	elseif RND_OPTIONS.mch.ma == "explored" then 
+		FOW_ExploreAll()
+	elseif RND_OPTIONS.mch.ma == "revealed" then
+		FOW_ForceRevealAllUnblockedAreas()
+	end
+	
+	-- show scores
+	if RND_OPTIONS.mch.sc then
+		for _, player in pairs(PLAYERS) do
+			player.scarModel.show_actual_score = true
+			UI_SetPlayerDataContext(player.id, player.scarModel)
+		end
+	end
+end
+
+
+
+RND_LOCAL_PLAYER = nil -- used for revealing on elimination
+function RND_OnPlayerDefeated(player, reason)
+	if player == RND_LOCAL_PLAYER then
+		FOW_UIRevealAll()
+	end
+end
+
+function RND_LocalPlayerChange(context)
+	if context ~= nil and context.player ~= nil then
+		RND_LOCAL_PLAYER = Core_GetPlayersTableEntry(context.player)
+	end
+end
+
+function RND_Start()
+	RND_LocalPlayerChange({ player = Game_GetLocalPlayer() })
+	Rule_AddGlobalEvent(RND_LocalPlayerChange, GE_LocalPlayerChanged)
+	
+	World_GetAllEntitiesOfType(EGroup_Create("RND_all_gaia"), "gaia")
+	
+	local RandomizeRes = function( egroupid, itemindex, entityID )
+		local rates = {
+			mult = 2.5 ^ RND_Rand(-1, 1) + RND_Rand(5.0, 10.0) * RND_Chance(0.05),
+			swap_resource = false --(RND_Chance(0.1) == 1),
+		}
+		
+		local contained = Entity_GetRemainingResourceDepositAmount(entityID)
+		
+		if not rates.swap_resource then
+			
+			-- randomize for deposits
+			Entity_SetRemainingResourceDepositAmount(entityID, math.floor(contained * rates.mult))
+			
+			-- todo: randomize for animals
+		else
+			local rand_val = RND_RandInt(1, 4)
+			local res = RT_FOOD
+			if rand_val == 1 then res = RT_Food elseif rand_val == 2 then res = RT_Wood elseif rand_val == 3 then res = RT_Gold else res = RT_Stone end
+			
+			-- cant randomize for deposits
+			
+			-- todo: randomize for animals
+		end
+		
+ 		--Entity_Despawn( entityID )
+ 	end
+
+ 	EGroup_ForEach( EGroup_FromName("RND_all_gaia"), RandomizeRes )
 end
 
 function RND_ApplyUpgradeBonus(bps)
@@ -156,6 +284,40 @@ function RND_ApplyUpgradeBonus(bps)
 end
 	
 RND_MODIFIERS = { }
+
+function RND_ApplyBonusToResourceDep(bps)
+	for _, ebp in pairs(bps) do 
+		if RND_MODIFIERS[ebp.PropertyBagGroupID] == nil then
+			RND_MODIFIERS[ebp.PropertyBagGroupID] = true
+			local rates = {
+				contained = 5.0 ^ RND_Rand(-1, 1.2),
+				swap_resource = (RND_Chance(0.1) == 1),
+			}
+			
+			if not rates.swap_resource then
+				for _, player in pairs(PLAYERS) do
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_food", rates.contained)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_wood", rates.contained)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_gold", rates.contained)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_stone", rates.contained)
+				end
+			else
+				local rand_val = RND_RandInt(1, 4)
+				local res = "olive_oil"
+				if rand_val == 1 then res = "food" elseif rand_val == 2 then res = "wood" elseif rand_val == 3 then res = "stone" else res = "gold" end
+				for _, player in pairs(PLAYERS) do
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_food", 0.0)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_wood", 0.0)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_gold", 0.0)
+					RND_ApplyMod(player.id, ebp, "resource_contained_amount_stone", 0.0)
+					RND_ApplyModAdditive(player.id, ebp, "resource_contained_amount_" .. res, math.floor(10.0 ^ RND_Rand(0.0, 3) + 10.0 ^ RND_Rand(0.0, 3) * RND_Chance(0.25) + 10.0 ^ RND_Rand(0.0, 4) * RND_Chance(0.1) ))
+				end
+			end
+		end
+	end
+	
+end
+	
 function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 	for _, ebp in pairs(bps) do 
 		if RND_MODIFIERS[ebp.PropertyBagGroupID] == nil then
@@ -163,7 +325,7 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 			
 			local rates = {
 			    production_speed_modifier = 10.0 ^ RND_Rand(-1.0, 1.0) + 5 * RND_Chance(0.1),
-			    trade_route_resource_generation_modifier = RND_Rand(0.1, 2.0),
+			    trade_route_resource_generation_modifier = 3.0 ^ RND_Rand(-1.0, 1.0),
 			    harvest_rate = {
 			        food = RND_Rand(0.1, 2.0),
 			        wood = RND_Rand(0.1, 2.0),
@@ -185,6 +347,7 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 			        stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
 			        olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
 			    },
+				-- could use BP_GetEntityBPCost to get an idea for how much cost to add
 			    cost_additive = {
 			        food = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
 			        wood = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
@@ -193,7 +356,12 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 			        olive_oil = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.0),
 			    },
 			    speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0),
-			    armor_modifier = 100 * RND_Rand(0.3, 3.0),
+				armor_scalar = {
+					-- based on 0, not 1
+					melee = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+					fire = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+					ranged = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+				},
 			    health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 0.75),
 			    sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2),
 			}
@@ -231,7 +399,10 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_olive_oil", rates.cost_additive.olive_oil)
 				end
 				
-				RND_ApplyMod(player.id, ebp, "armor_modifier", rates.armor_modifier)
+				RND_ApplyMod(player.id, ebp, "armor_scalar_for_melee_damage", rates.armor_scalar.melee)
+				RND_ApplyMod(player.id, ebp, "armor_scalar_for_fire_damage", rates.armor_scalar.fire)
+				RND_ApplyMod(player.id, ebp, "armor_scalar_for_ranged_damage", rates.armor_scalar.ranged)
+				
 				RND_ApplyMod(player.id, ebp, "health_maximum_modifier", rates.health_maximum_modifier)
 				RND_ApplyMod(player.id, ebp, "sight_radius_modifier", rates.sight_radius_modifier)
 				
