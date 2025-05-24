@@ -21,7 +21,8 @@ import("gameplay/currentageui.scar")
 
 
 -- import("modifiers.scar")
-
+-- Import cheat support
+import("gameplay/cheat.scar") 
 
 Core_RegisterModule("RND")
 
@@ -217,36 +218,67 @@ function RND_Start()
 	RND_LocalPlayerChange({ player = Game_GetLocalPlayer() })
 	Rule_AddGlobalEvent(RND_LocalPlayerChange, GE_LocalPlayerChanged)
 	
+	
+	-- randomize gaia resources
 	World_GetAllEntitiesOfType(EGroup_Create("RND_all_gaia"), "gaia")
+	World_GetAllEntitiesOfType(EGroup_Create("RND_all_animal"), "animal")
 	
 	local RandomizeRes = function( egroupid, itemindex, entityID )
 		local rates = {
 			mult = 2.5 ^ RND_Rand(-1, 1) + RND_Rand(5.0, 10.0) * RND_Chance(0.05),
-			swap_resource = false --(RND_Chance(0.1) == 1),
 		}
-		
-		local contained = Entity_GetRemainingResourceDepositAmount(entityID)
-		
-		if not rates.swap_resource then
-			
-			-- randomize for deposits
-			Entity_SetRemainingResourceDepositAmount(entityID, math.floor(contained * rates.mult))
-			
-			-- todo: randomize for animals
-		else
-			local rand_val = RND_RandInt(1, 4)
-			local res = RT_FOOD
-			if rand_val == 1 then res = RT_Food elseif rand_val == 2 then res = RT_Wood elseif rand_val == 3 then res = RT_Gold else res = RT_Stone end
-			
-			-- cant randomize for deposits
-			
-			-- todo: randomize for animals
-		end
-		
- 		--Entity_Despawn( entityID )
+
+		local contained_deposit = Entity_GetRemainingResourceDepositAmount(entityID)
+		Entity_SetRemainingResourceDepositAmount(entityID, math.floor(contained_deposit * rates.mult))
+
  	end
+	
+	-- doesnt work
+	local RandomizeResAnimal = function( egroupid, itemindex, entityID )
+		--local rates = {
+			--mult = 2.5 ^ RND_Rand(-1, 1) + RND_Rand(5.0, 10.0) * RND_Chance(0.05),
+			--swap_resource = RND_Chance(0.1) == 1,
+		--}
+		
+		---- get resources contained if this is an animal
+		--local an_food_contained = Entity_GetResource(entityID, RT_Food)
+		--local an_wood_contained = Entity_GetResource(entityID, RT_Wood)
+		--local an_gold_contained = Entity_GetResource(entityID, RT_Gold)
+		--local an_stone_contained = Entity_GetResource(entityID, RT_Stone)
+
+		--local contained_animal_amount = math.max(an_food_contained, an_wood_contained, an_gold_contained, an_stone_contained)
+		
+		--local contained_animal_resource
+		--if contained_animal_amount == an_food_contained then
+		    --contained_animal_resource = RT_Food
+		--elseif contained_animal_amount == an_wood_contained then
+		    --contained_animal_resource = RT_Wood
+		--elseif contained_animal_amount == an_gold_contained then
+		    --contained_animal_resource = RT_Gold
+		--elseif contained_animal_amount == an_stone_contained then
+		    --contained_animal_resource = RT_Stone
+		--end
+		
+		
+		---- doesnt work
+		----Modifier_ApplyToEntity(Modifier_Create(MAT_EntityType, "health_maximum_modifier", MUT_Multiplication, false, rates.mult, Entity_GetBlueprint(entityID)), entityID, 0.0)
+		
+		
+		
+		--if not rates.swap_resource then
+			--Entity_SetResource(entityID, contained_animal_resource, contained_animal_amount * rates.mult)
+		--else
+			--local rand_val = RND_RandInt(1, 4)
+			--local res = RT_FOOD
+			--if rand_val == 1 then res = RT_Food elseif rand_val == 2 then res = RT_Wood elseif rand_val == 3 then res = RT_Gold else res = RT_Stone end
+			
+			--Entity_SetResource(entityID, contained_animal_resource, 0)
+			--Entity_SetResource(entityID, res, contained_animal_amount * rates.mult)
+		--end
+	end
 
  	EGroup_ForEach( EGroup_FromName("RND_all_gaia"), RandomizeRes )
+ 	EGroup_ForEach( EGroup_FromName("RND_all_animal"), RandomizeResAnimal )
 end
 
 function RND_ApplyUpgradeBonus(bps)

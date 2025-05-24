@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ProjectSettings xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Essence.Editor.Core">
-	<LastDocumentDirectory i:nil="true" />
+	<LastDocumentDirectory>D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives</LastDocumentDirectory>
 	<LastDocumentType i:nil="true" />
 	<PluginSettings xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 		<d2p1:anyType xmlns:d3p1="http://schemas.datacontract.org/2004/07/Essence.Editor.Controls" i:type="d3p1:FileExplorerProjectSettings">
@@ -22,6 +22,8 @@
 	</PluginSettings>
 	<RecentFiles>
 		<History xmlns:d3p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+			<d3p1:string>C:\Users\mcana\AppData\Local\Temp\standard_mode.scar</d3p1:string>
+			<d3p1:string>D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives\Data.sga</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.rdo</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.rdo</d3p1:string>
 			<d3p1:string>C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\locdb\randomizer.locdb</d3p1:string>
