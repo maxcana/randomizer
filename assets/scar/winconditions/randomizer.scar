@@ -66,6 +66,7 @@ RND_BP_WORKER = "worker"
 RND_BP_BUILDING = "building"
 RND_BP_UPGRADE = "upgrade"
 RND_BP_GAIA = "gaia"
+RND_BP_TOWN_CENTER = "town_center"
 
 RND_OPTIONS = {
 	win = { -- win conditions
@@ -125,7 +126,6 @@ function RND_OnGameSetup()
 	end
 end
 
--- Core OnInit
 function RND_PreInit()
 	local rFood = RND_RandInt(0, 200*2)
 	local rWood = RND_RandInt(0, 150*2)
@@ -140,32 +140,30 @@ function RND_PreInit()
 	end
 	
 	RND_PopChange(RND_RandInt(0, 100), RND_RandInt(375, 425))
-	
-	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_BUILDING), true, false, false)
-	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_WORKER), false, true, true)
-	RND_ApplyBonus(BP_GetEntityBlueprintsWithType(RND_BP_UNIT_CLASS), true, false, true)
+	RND_ApplyBonus(BP_GetEntityBlueprintsWithType({RND_BP_BUILDING, RND_BP_WORKER, RND_BP_UNIT_CLASS}))
 	
 	-- doesn't work properly
 	--RND_ApplyBonusToResourceDep(BP_GetEntityBlueprintsWithType(RND_BP_GAIA))
 	
 	for _, wpn_name in pairs(listOfAllWeapons) do
 		local rates = {
-			damage = RND_Rand(0.1, 2.0),
+			damage = 2.0 ^ RND_Rand(-1.0, 1.0),
 			accuracy = RND_Rand(0.5, 1.5),
 			range = 2.0 ^ RND_Rand(-1.5, 1.5),
-			reload = RND_Rand(0.1, 2.0),
-			wind_down = RND_Rand(0.6, 1.4),
-			cooldown = RND_Rand(0.1, 2.0),
-			burst_rate = RND_Rand(0.5, 2.0),
+			reload = RND_Rand(0.0, 2.0),
+			wind_down = RND_Rand(0.2, 1.6),
+			cooldown = RND_Rand(0.0, 2.0),
+			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.0),
 		}
+		local bp = BP_GetWeaponBlueprint(wpn_name)
 		for _, player in pairs(PLAYERS) do
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "damage_weapon_modifier", MUT_Multiplication, false, rates.damage, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "range_weapon_modifier", MUT_Multiplication, false, rates.range, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.reload, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.cooldown, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.accuracy, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.wind_down, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_burst_rate_of_fire_modifier", MUT_Multiplication, false, rates.burst_rate, BP_GetWeaponBlueprint(wpn_name)), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "damage_weapon_modifier", MUT_Multiplication, false, rates.damage, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "range_weapon_modifier", MUT_Multiplication, false, rates.range, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.reload, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.cooldown, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.accuracy, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.wind_down, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_burst_rate_of_fire_modifier", MUT_Multiplication, false, rates.burst_rate, bp), player.id, 0.0)
 		end
 	end
 	
@@ -214,14 +212,19 @@ function RND_LocalPlayerChange(context)
 	end
 end
 
+-- Randomizes gaia
 function RND_Start()
 	RND_LocalPlayerChange({ player = Game_GetLocalPlayer() })
 	Rule_AddGlobalEvent(RND_LocalPlayerChange, GE_LocalPlayerChanged)
 	
 	
 	-- randomize gaia resources
-	World_GetAllEntitiesOfType(EGroup_Create("RND_all_gaia"), "gaia")
-	World_GetAllEntitiesOfType(EGroup_Create("RND_all_animal"), "animal")
+	World_GetAllEntitiesOfType(EGroup_Create("RND_forage"), "forage_bush")
+	World_GetAllEntitiesOfType(EGroup_Create("RND_deposits"), "resource_improvable")
+	World_GetAllEntitiesOfType(EGroup_Create("RND_shore"), "shore_fish")
+	World_GetAllEntitiesOfType(EGroup_Create("RND_deep"), "deep_water_fish")
+	
+	--World_GetAllEntitiesOfType(EGroup_Create("RND_all_animal"), "animal")
 	
 	local RandomizeRes = function( egroupid, itemindex, entityID )
 		local rates = {
@@ -230,11 +233,10 @@ function RND_Start()
 
 		local contained_deposit = Entity_GetRemainingResourceDepositAmount(entityID)
 		Entity_SetRemainingResourceDepositAmount(entityID, math.floor(contained_deposit * rates.mult))
-
  	end
 	
 	-- doesnt work
-	local RandomizeResAnimal = function( egroupid, itemindex, entityID )
+	--local RandomizeResAnimal = function( egroupid, itemindex, entityID )
 		--local rates = {
 			--mult = 2.5 ^ RND_Rand(-1, 1) + RND_Rand(5.0, 10.0) * RND_Chance(0.05),
 			--swap_resource = RND_Chance(0.1) == 1,
@@ -275,12 +277,15 @@ function RND_Start()
 			--Entity_SetResource(entityID, contained_animal_resource, 0)
 			--Entity_SetResource(entityID, res, contained_animal_amount * rates.mult)
 		--end
-	end
+	--end
 
- 	EGroup_ForEach( EGroup_FromName("RND_all_gaia"), RandomizeRes )
- 	EGroup_ForEach( EGroup_FromName("RND_all_animal"), RandomizeResAnimal )
+ 	EGroup_ForEach( EGroup_FromName("RND_forage"), RandomizeRes )
+	EGroup_ForEach( EGroup_FromName("RND_deposits"), RandomizeRes )
+	EGroup_ForEach( EGroup_FromName("RND_shore"), RandomizeRes )
+	EGroup_ForEach( EGroup_FromName("RND_deep"), RandomizeRes )
 end
 
+-- Randomizes upgrades
 function RND_ApplyUpgradeBonus(bps)
 	for _, ubp in pairs(bps) do
 		local rates = {
@@ -291,10 +296,10 @@ function RND_ApplyUpgradeBonus(bps)
 				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
 			},
 			cost_additive = {
-				food = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
-				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
-				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
-				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.25),
+				food = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
+				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
+				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
+				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
 			},
 			production_speed_modifier = RND_Rand(0.0, 2.0) + 5 * RND_Chance(0.15)
 		}
@@ -314,95 +319,91 @@ function RND_ApplyUpgradeBonus(bps)
 		end
 	end
 end
-	
+
 RND_MODIFIERS = { }
 
-function RND_ApplyBonusToResourceDep(bps)
+-- Randomizes ebps
+function RND_ApplyBonus(bps)
 	for _, ebp in pairs(bps) do 
 		if RND_MODIFIERS[ebp.PropertyBagGroupID] == nil then
 			RND_MODIFIERS[ebp.PropertyBagGroupID] = true
-			local rates = {
-				contained = 5.0 ^ RND_Rand(-1, 1.2),
-				swap_resource = (RND_Chance(0.1) == 1),
-			}
 			
-			if not rates.swap_resource then
-				for _, player in pairs(PLAYERS) do
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_food", rates.contained)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_wood", rates.contained)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_gold", rates.contained)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_stone", rates.contained)
-				end
+			local worker = Entity_IsEBPOfType(ebp, RND_BP_WORKER)
+			local unit = Entity_IsEBPOfType(ebp, RND_BP_UNIT_CLASS)
+			local tc = Entity_IsEBPOfType(ebp, RND_BP_TOWN_CENTER)
+			
+			local rates = {}
+
+			-- Set up rates
+			if worker or tc then
+				rates.production_speed_modifier = 2.0 ^ RND_Rand(-1.0, 1.0) + 1 * RND_Chance(0.1)
 			else
-				local rand_val = RND_RandInt(1, 4)
-				local res = "olive_oil"
-				if rand_val == 1 then res = "food" elseif rand_val == 2 then res = "wood" elseif rand_val == 3 then res = "stone" else res = "gold" end
-				for _, player in pairs(PLAYERS) do
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_food", 0.0)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_wood", 0.0)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_gold", 0.0)
-					RND_ApplyMod(player.id, ebp, "resource_contained_amount_stone", 0.0)
-					RND_ApplyModAdditive(player.id, ebp, "resource_contained_amount_" .. res, math.floor(10.0 ^ RND_Rand(0.0, 3) + 10.0 ^ RND_Rand(0.0, 3) * RND_Chance(0.25) + 10.0 ^ RND_Rand(0.0, 4) * RND_Chance(0.1) ))
-				end
+				rates.production_speed_modifier = 10.0 ^ RND_Rand(-1.0, 1.0) + 5 * RND_Chance(0.1)
 			end
-		end
-	end
-	
-end
-	
-function RND_ApplyBonus(bps, additive_cost, gathering, unit)
-	for _, ebp in pairs(bps) do 
-		if RND_MODIFIERS[ebp.PropertyBagGroupID] == nil then
-			RND_MODIFIERS[ebp.PropertyBagGroupID] = true
-			
-			local rates = {
-			    production_speed_modifier = 10.0 ^ RND_Rand(-1.0, 1.0) + 5 * RND_Chance(0.1),
-			    trade_route_resource_generation_modifier = 3.0 ^ RND_Rand(-1.0, 1.0),
-			    harvest_rate = {
-			        food = RND_Rand(0.1, 2.0),
-			        wood = RND_Rand(0.1, 2.0),
-			        gold = RND_Rand(0.1, 2.0),
-			        stone = RND_Rand(0.1, 2.0),
-			    },
-			    carry_capacity = {
-			        food = RND_Rand(0.1, 2.0),
-			        wood = RND_Rand(0.1, 2.0),
-			        gold = RND_Rand(0.1, 2.0),
-			        stone = RND_Rand(0.1, 2.0),
-			    },
-			    construction_rate = RND_Rand(0.7, 1.5),
-			    repair_rate_modifier = RND_Rand(0.5, 1.5),
-			    cost_multiplier = {
-			        food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-			        wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-			        gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-			        stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-			        olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-			    },
-				-- could use BP_GetEntityBPCost to get an idea for how much cost to add
-			    cost_additive = {
-			        food = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
-			        wood = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
-			        gold = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
-			        stone = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.15),
-			        olive_oil = math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.0),
-			    },
-			    speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0),
-				armor_scalar = {
-					-- based on 0, not 1
-					melee = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
-					fire = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
-					ranged = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
-				},
-			    health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 0.75),
-			    sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2),
+
+
+			rates.trade_route_resource_generation_modifier = 3.0 ^ RND_Rand(-1.0, 1.0)
+
+			if worker then
+				rates.harvest_rate = {
+					food = 2.0 ^ RND_Rand(-1.0, 1.0),
+					wood = 2.0 ^ RND_Rand(-1.0, 1.0),
+					gold = 2.0 ^ RND_Rand(-1.0, 1.0),
+					stone = 2.0 ^ RND_Rand(-1.0, 1.0),
+				}
+				rates.carry_capacity = {
+					food = 2.0 ^ RND_Rand(-1.0, 1.0),
+					wood = 2.0 ^ RND_Rand(-1.0, 1.0),
+					gold = 2.0 ^ RND_Rand(-1.0, 1.0),
+					stone = 2.0 ^ RND_Rand(-1.0, 1.0),
+				}
+				rates.construction_rate = RND_Rand(0.7, 1.5)
+				rates.repair_rate_modifier = RND_Rand(0.7, 1.5)
+			end
+
+			rates.cost_multiplier = {
+				food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
+				wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.015),
+				gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+				olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
 			}
 			
+			if worker then 
+				rates.cost_multiplier.food = RND_Rand(0.1, 2.0)
+			end
+				
+
+			if not worker then
+				rates.cost_additive = {
+					food = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+					wood = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+					gold = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+					stone = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+					olive_oil = 0,
+				}
+			end
+
+			rates.armor_scalar = {
+				melee = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+				fire = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+				ranged = RND_Rand(-0.5, 0.5) * RND_Chance(0.6),
+			}
+
+			rates.health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 1.0)
+			rates.sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2)
+
+			if unit then
+				rates.speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0)
+				rates.acceleration_modifier = rates.speed_maximum_modifier
+			end
+
+			-- Apply modifiers
 			for _, player in pairs(PLAYERS) do
 			    RND_ApplyMod(player.id, ebp, "production_speed_modifier", rates.production_speed_modifier)
 			    RND_ApplyMod(player.id, ebp, "trade_route_resource_generation_modifier", rates.trade_route_resource_generation_modifier)
 			 
-				if(gathering) then
+				if(worker) then
 					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_food", rates.harvest_rate.food)
 					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_wood", rates.harvest_rate.wood)
 					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_gold", rates.harvest_rate.gold)
@@ -412,27 +413,27 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_wood", rates.carry_capacity.wood)
 					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_gold", rates.carry_capacity.gold)
 					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_stone", rates.carry_capacity.stone)
-				end
 					
-			    RND_ApplyMod(player.id, ebp, "construction_rate", rates.construction_rate)
-			    RND_ApplyMod(player.id, ebp, "repair_rate_modifier", rates.repair_rate_modifier)
-			
+				    RND_ApplyMod(player.id, ebp, "construction_rate", rates.construction_rate)
+			    	RND_ApplyMod(player.id, ebp, "repair_rate_modifier", rates.repair_rate_modifier)
+				end	
+
 			    RND_ApplyMod(player.id, ebp, "resource_entity_cost_food", rates.cost_multiplier.food)
 			    RND_ApplyMod(player.id, ebp, "resource_entity_cost_wood", rates.cost_multiplier.wood)
 			    RND_ApplyMod(player.id, ebp, "resource_entity_cost_gold", rates.cost_multiplier.gold)
 			    RND_ApplyMod(player.id, ebp, "resource_entity_cost_stone", rates.cost_multiplier.stone)
 			    RND_ApplyMod(player.id, ebp, "resource_entity_cost_olive_oil", rates.cost_multiplier.olive_oil)
 				
-				if(additive_cost) then
+				if(not worker) then
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_food", rates.cost_additive.food)
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_wood", rates.cost_additive.wood)
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_gold", rates.cost_additive.gold)
 					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_stone", rates.cost_additive.stone)
-					RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_olive_oil", rates.cost_additive.olive_oil)
+					--RND_ApplyModAdditive(player.id, ebp, "resource_entity_cost_olive_oil", rates.cost_additive.olive_oil)
 				end
 				
 				RND_ApplyMod(player.id, ebp, "armor_scalar_for_melee_damage", rates.armor_scalar.melee)
-				RND_ApplyMod(player.id, ebp, "armor_scalar_for_fire_damage", rates.armor_scalar.fire)
+				RND_ApplyMod(player.id, ebp, "armor_scalar_for_truedamage_damage", rates.armor_scalar.fire)
 				RND_ApplyMod(player.id, ebp, "armor_scalar_for_ranged_damage", rates.armor_scalar.ranged)
 				
 				RND_ApplyMod(player.id, ebp, "health_maximum_modifier", rates.health_maximum_modifier)
@@ -440,54 +441,23 @@ function RND_ApplyBonus(bps, additive_cost, gathering, unit)
 				
 				if(unit) then
 					RND_ApplyMod(player.id, ebp, "speed_maximum_modifier", rates.speed_maximum_modifier)
-					
-					-- existing unit weapon modifiers
-					
-						--[[ local num_hardpoints = Entity_GetWeaponHardpointCount(ebp.EntityID)
-				    for hardpoint_index = 1, num_hardpoints do
-				        local hardpoint_number = tostring(hardpoint_index)
-				        if string.len(hardpoint_number) == 1 then
-				            hardpoint_number = "0" .. hardpoint_number
-				        end
-				
-				        local hardpoint = "hardpoint_" .. hardpoint_number
-				
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "damage_weapon_modifier", MUT_Multiplication, false, rates.weapon.damage, hardpoint), player.id, 0.0)
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.weapon.accuracy, hardpoint), player.id, 0.0)
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "range_weapon_modifier", MUT_Multiplication, false, rates.weapon.range, hardpoint), player.id, 0.0)
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "reload_weapon_modifier", MUT_Multiplication, false, rates.weapon.reload, hardpoint), player.id, 0.0)
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.weapon.wind_down, hardpoint), player.id, 0.0)
-				        Modifier_ApplyToPlayer(Modifier_Create(MAT_Weapon, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.weapon.cooldown, hardpoint), player.id, 0.0)
-				    end ]]
+					RND_ApplyMod(player.id, ebp, "acceleration_modifier", rates.acceleration_modifier)
 				end
 			end
 		end
 	end
 end
 
--- POP CAP
-
+-- Pop cap
 function RND_PopChange(min, max)
 	for _, player in pairs(PLAYERS) do		
-		RND_ApplyPopMax(player, max)
-		RND_SetPopMin(player, min, max) 
+		Modifier_ApplyToPlayer(Modifier_Create(MAT_Player, "max_personnel_cap_player_modifier", MUT_Addition, false, (max - 200), ""), player.id, 0)
+
+		-- Mongols receive always maximum to maintain their unique bonus.
+		if player.raceName == "mongol" then
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_Player, "personnel_cap_player_modifier", MUT_Addition, false, max - 200, ""), player.id, 0)	
+		else
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_Player, "personnel_cap_player_modifier", MUT_Addition, false, min, ""), player.id, 0)
+		end
 	end
-end
-
-function RND_SetPopMin(player, pop_size, max_pop_size)
-	local value = pop_size
-	-- Mongols receive always maximum to maintain their unique bonus.
-	if player.raceName == "mongol" then
-			value = max_pop_size - 200
-	end
-	RND_ApplyPopMin(player, value)	
-end
-
-function RND_ApplyPopMin(player, pop_size)
-	Modifier_ApplyToPlayer(Modifier_Create(MAT_Player, "personnel_cap_player_modifier", MUT_Addition, false, pop_size, ""), player.id, 0)
-end
-
-function RND_ApplyPopMax(player, pop_size)
-	local value = - (200 - pop_size)
-	Modifier_ApplyToPlayer(Modifier_Create(MAT_Player, "max_personnel_cap_player_modifier", MUT_Addition, false, value, ""), player.id, 0)
 end
