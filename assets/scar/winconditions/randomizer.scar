@@ -153,10 +153,13 @@ function RND_PreInit()
 			damage = 2.0 ^ RND_Rand(-1.0, 1.0),
 			--accuracy = RND_Rand(0.5, 1.5),
 			range = 2.0 ^ RND_Rand(-1.5, 1.5),
-			atk_time_mult = RND_Rand(RND_Rand(0.0, 0.5), RND_Rand(1.5, 2.0)),
+			atk_time_mult = RND_Rand(RND_Rand(0.0, 0.1), RND_Rand(1.5, 2.0)),
 			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.5),
 			siege_setup = RND_Rand(0.0, 2.0)
 		}
+		if RND_Chance(0.02 == 1) then
+			rates.atk_time_mult = RND_Rand(0.0, 0.2)
+		end
 		local bp = BP_GetWeaponBlueprint(wpn_name)
 		for _, player in pairs(PLAYERS) do
 			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "damage_weapon_modifier", MUT_Multiplication, false, rates.damage, bp), player.id, 0.0)
