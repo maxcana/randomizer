@@ -67,6 +67,9 @@ RND_BP_BUILDING = "building"
 RND_BP_UPGRADE = "upgrade"
 RND_BP_GAIA = "gaia"
 RND_BP_TOWN_CENTER = "town_center"
+RND_BP_ECON_BUILDING = "economy_building"
+RND_BP_WALL = "wall"
+RND_BP_HOUSE = "house"
 
 RND_OPTIONS = {
 	win = { -- win conditions
@@ -148,21 +151,27 @@ function RND_PreInit()
 	for _, wpn_name in pairs(listOfAllWeapons) do
 		local rates = {
 			damage = 2.0 ^ RND_Rand(-1.0, 1.0),
-			accuracy = RND_Rand(0.5, 1.5),
+			--accuracy = RND_Rand(0.5, 1.5),
 			range = 2.0 ^ RND_Rand(-1.5, 1.5),
-			reload = RND_Rand(0.0, 2.0),
-			wind_down = RND_Rand(0.2, 1.6),
-			cooldown = RND_Rand(0.0, 2.0),
-			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.0),
+			atk_time_mult = RND_Rand(RND_Rand(0.0, 0.5), RND_Rand(1.5, 2.0)),
+			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.5),
+			siege_setup = RND_Rand(0.0, 2.0)
 		}
 		local bp = BP_GetWeaponBlueprint(wpn_name)
 		for _, player in pairs(PLAYERS) do
 			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "damage_weapon_modifier", MUT_Multiplication, false, rates.damage, bp), player.id, 0.0)
 			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "range_weapon_modifier", MUT_Multiplication, false, rates.range, bp), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.reload, bp), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.cooldown, bp), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.accuracy, bp), player.id, 0.0)
-			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.wind_down, bp), player.id, 0.0)
+			
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "reload_weapon_modifier", MUT_Multiplication, false, rates.atk_time_mult, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "cooldown_weapon_modifier", MUT_Multiplication, false, rates.atk_time_mult, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_up_modifier", MUT_Multiplication, false, rates.atk_time_mult, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_wind_down_modifier", MUT_Multiplication, false, rates.atk_time_mult, bp), player.id, 0.0)
+
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_setup_modifier", MUT_Multiplication, false, rates.siege_setup, bp), player.id, 0.0)
+			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_teardown_modifier", MUT_Multiplication, false, rates.siege_setup, bp), player.id, 0.0)
+			
+			--Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "accuracy_weapon_modifier", MUT_Multiplication, false, rates.accuracy, bp), player.id, 0.0)
+
 			Modifier_ApplyToPlayer(Modifier_Create(MAT_WeaponType, "weapon_burst_rate_of_fire_modifier", MUT_Multiplication, false, rates.burst_rate, bp), player.id, 0.0)
 		end
 	end
@@ -170,6 +179,9 @@ function RND_PreInit()
 end
 
 function RND_OnInit()
+	Core_CallDelegateFunctions("DiplomacyEnabled", true)
+	Core_CallDelegateFunctions("TributeEnabled", true)
+	
 	-- upgrade modifiers
 	RND_ApplyUpgradeBonus(
 		BP_GetUpgradesMatchingTypes({
@@ -296,12 +308,12 @@ function RND_ApplyUpgradeBonus(bps)
 				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
 			},
 			cost_additive = {
-				food = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
-				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
-				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
-				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.4)) * RND_Chance(0.15),
+				food = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
+				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
+				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
+				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
 			},
-			production_speed_modifier = RND_Rand(0.0, 2.0) + 5 * RND_Chance(0.15)
+			production_speed_modifier = RND_Rand(RND_Rand(0.0, 0.5), 2.0) + 5 * RND_Chance(0.15)
 		}
 		
 		for _, player in pairs(PLAYERS) do
@@ -332,56 +344,84 @@ function RND_ApplyBonus(bps)
 			local unit = Entity_IsEBPOfType(ebp, RND_BP_UNIT_CLASS)
 			local tc = Entity_IsEBPOfType(ebp, RND_BP_TOWN_CENTER)
 			
+			local econ_building = Entity_IsEBPOfType(ebp, RND_BP_ECON_BUILDING)
+			local wall = Entity_IsEBPOfType(ebp, RND_BP_WALL)
+			local house = Entity_IsEBPOfType(ebp, RND_BP_HOUSE)
+		
 			local rates = {}
 
 			-- Set up rates
 			if worker or tc then
-				rates.production_speed_modifier = 2.0 ^ RND_Rand(-1.0, 1.0) + 1 * RND_Chance(0.1)
+				rates.production_speed_modifier = 2.0 ^ RND_Rand(-0.3, 0.3)
 			else
-				rates.production_speed_modifier = 10.0 ^ RND_Rand(-1.0, 1.0) + 5 * RND_Chance(0.1)
+				rates.production_speed_modifier = 10.0 ^ RND_Rand(-0.7, 1.2) + 5 * RND_Chance(0.1)
 			end
 
 
-			rates.trade_route_resource_generation_modifier = 3.0 ^ RND_Rand(-1.0, 1.0)
+			rates.trade_route_resource_generation_modifier = 2.0 ^ RND_Rand(-0.6, 0.6)
 
 			if worker then
-				rates.harvest_rate = {
-					food = 2.0 ^ RND_Rand(-1.0, 1.0),
-					wood = 2.0 ^ RND_Rand(-1.0, 1.0),
-					gold = 2.0 ^ RND_Rand(-1.0, 1.0),
-					stone = 2.0 ^ RND_Rand(-1.0, 1.0),
-				}
-				rates.carry_capacity = {
-					food = 2.0 ^ RND_Rand(-1.0, 1.0),
-					wood = 2.0 ^ RND_Rand(-1.0, 1.0),
-					gold = 2.0 ^ RND_Rand(-1.0, 1.0),
-					stone = 2.0 ^ RND_Rand(-1.0, 1.0),
-				}
+				--rates.harvest_rate = {
+					--food = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--wood = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--gold = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--stone = 2.0 ^ RND_Rand(-1.0, 1.0),
+				--}
+				--rates.carry_capacity = {
+					--food = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--wood = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--gold = 2.0 ^ RND_Rand(-1.0, 1.0),
+					--stone = 2.0 ^ RND_Rand(-1.0, 1.0),
+				--}
 				rates.construction_rate = RND_Rand(0.7, 1.5)
 				rates.repair_rate_modifier = RND_Rand(0.7, 1.5)
 			end
-
-			rates.cost_multiplier = {
-				food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-				wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.015),
-				gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
-				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
-				olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
-			}
+			
+			if econ_building then
+				rates.cost_multiplier = {
+					food = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.05),
+					wood = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.015),
+					gold = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
+					stone = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
+					olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
+				}
+			else
+				rates.cost_multiplier = {
+					food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
+					wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.015),
+					gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+					stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+					olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+				}
+			end
 			
 			if worker then 
 				rates.cost_multiplier.food = RND_Rand(0.1, 2.0)
 			end
+			
+			if house then
+				rates.cost_multiplier.wood = RND_Rand(0.1, 2.0)
+			end
 				
 
-			if not worker then
-				rates.cost_additive = {
-					food = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-					wood = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-					gold = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-					stone = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-					olive_oil = 0,
-				}
+			if not worker and not wall then
+				if econ_building or house then
+					rates.cost_additive = {
+						food = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
+						wood = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
+						gold = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
+						stone = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
+						olive_oil = 0,
+					}
+				else
+					rates.cost_additive = {
+						food = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+						wood = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+						gold = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+						stone = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+						olive_oil = 0,
+					}
+				end
 			end
 
 			rates.armor_scalar = {
@@ -394,7 +434,11 @@ function RND_ApplyBonus(bps)
 			rates.sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2)
 
 			if unit then
-				rates.speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0)
+				if worker then
+					rates.speed_maximum_modifier = 1.15 ^ RND_Rand(-2.0, 2.0)
+				else
+					rates.speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0)
+				end
 				rates.acceleration_modifier = rates.speed_maximum_modifier
 			end
 
@@ -402,17 +446,17 @@ function RND_ApplyBonus(bps)
 			for _, player in pairs(PLAYERS) do
 			    RND_ApplyMod(player.id, ebp, "production_speed_modifier", rates.production_speed_modifier)
 			    RND_ApplyMod(player.id, ebp, "trade_route_resource_generation_modifier", rates.trade_route_resource_generation_modifier)
-			 
+
 				if(worker) then
-					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_food", rates.harvest_rate.food)
-					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_wood", rates.harvest_rate.wood)
-					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_gold", rates.harvest_rate.gold)
-					RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_stone", rates.harvest_rate.stone)
+					--RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_food", rates.harvest_rate.food)
+					--RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_wood", rates.harvest_rate.wood)
+					--RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_gold", rates.harvest_rate.gold)
+					--RND_ApplyMod(player.id, ebp, "resource_entity_harvest_rate_stone", rates.harvest_rate.stone)
 					
-					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_food", rates.carry_capacity.food)
-					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_wood", rates.carry_capacity.wood)
-					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_gold", rates.carry_capacity.gold)
-					RND_ApplyMod(player.id, ebp, "resource_carry_capacity_stone", rates.carry_capacity.stone)
+					--RND_ApplyMod(player.id, ebp, "resource_carry_capacity_food", rates.carry_capacity.food)
+					--RND_ApplyMod(player.id, ebp, "resource_carry_capacity_wood", rates.carry_capacity.wood)
+					--RND_ApplyMod(player.id, ebp, "resource_carry_capacity_gold", rates.carry_capacity.gold)
+					--RND_ApplyMod(player.id, ebp, "resource_carry_capacity_stone", rates.carry_capacity.stone)
 					
 				    RND_ApplyMod(player.id, ebp, "construction_rate", rates.construction_rate)
 			    	RND_ApplyMod(player.id, ebp, "repair_rate_modifier", rates.repair_rate_modifier)
