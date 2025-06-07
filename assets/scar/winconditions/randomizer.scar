@@ -157,7 +157,7 @@ function RND_PreInit()
 			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.5),
 			siege_setup = RND_Rand(0.0, 2.0)
 		}
-		if RND_Chance(0.02 == 1) then
+		if RND_Chance(0.02) == 1 then
 			rates.atk_time_mult = RND_Rand(0.0, 0.2)
 		end
 		local bp = BP_GetWeaponBlueprint(wpn_name)
