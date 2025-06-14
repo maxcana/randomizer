@@ -448,9 +448,9 @@ function RND_ApplyBonus(bps)
 			end
 
 			rates.armor = {
-				melee = 2.0 ^ RND_Rand(-1, 1),
-				fire = 2.0 ^ RND_Rand(-1, 1),
-				ranged = 2.0 ^ RND_Rand(-1, 1),
+				melee = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				fire = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				ranged = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
 				--truedamage = 2.0 ^ RND_Rand(-1, 1),
 				--anticavalry = 2.0 ^ RND_Rand(-1, 1),
 			}
