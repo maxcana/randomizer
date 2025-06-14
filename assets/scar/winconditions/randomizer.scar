@@ -130,6 +130,10 @@ function RND_OnGameSetup()
 end
 
 function RND_PreInit()
+	Core_CallDelegateFunctions("DiplomacyEnabled", true)
+	Core_CallDelegateFunctions("TributeEnabled", true)
+	
+	
 	local rFood = RND_RandInt(0, 200*2)
 	local rWood = RND_RandInt(0, 150*2)
 	local rGold = RND_RandInt(0, 100*2)
@@ -182,8 +186,7 @@ function RND_PreInit()
 end
 
 function RND_OnInit()
-	Core_CallDelegateFunctions("DiplomacyEnabled", true)
-	Core_CallDelegateFunctions("TributeEnabled", true)
+
 	
 	-- upgrade modifiers
 	RND_ApplyUpgradeBonus(
