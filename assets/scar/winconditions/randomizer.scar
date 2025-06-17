@@ -51,13 +51,17 @@ end
 
 -- Apply a single modifier
 function RND_ApplyMod(player_id, ebp, RND_type, RND_value)
-    local m = Modifier_Create(MAT_EntityType, RND_type, MUT_Multiplication, false, RND_value, ebp)
-    Modifier_ApplyToPlayer(m, player_id, 0.0)
+	if RND_value ~= 1 then
+		local m = Modifier_Create(MAT_EntityType, RND_type, MUT_Multiplication, false, RND_value, ebp)
+		Modifier_ApplyToPlayer(m, player_id, 0.0)
+	end
 end
 
 function RND_ApplyModAdditive(player_id, ebp, RND_type, RND_value)
-    local m = Modifier_Create(MAT_EntityType, RND_type, MUT_Addition, false, RND_value, ebp)
-    Modifier_ApplyToPlayer(m, player_id, 0.0)
+	if RND_value ~= 0 then
+		local m = Modifier_Create(MAT_EntityType, RND_type, MUT_Addition, false, RND_value, ebp)
+		Modifier_ApplyToPlayer(m, player_id, 0.0)
+	end
 end
 
 
@@ -385,9 +389,57 @@ function RND_ApplyBonus(bps)
 					--gold = 2.0 ^ RND_Rand(-1.0, 1.0),
 					--stone = 2.0 ^ RND_Rand(-1.0, 1.0),
 				--}
-				rates.construction_rate = RND_Rand(0.7, 1.5)
-				rates.repair_rate_modifier = RND_Rand(0.7, 1.5)
+				rates.construction_rate = RND_Rand(0.8, 1.4)
+				rates.repair_rate_modifier = RND_Rand(0.8, 1.4)
 			end
+			
+			-- truedamage = siege
+			rates.armor = {
+				melee = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				fire = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				ranged = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				truedamage = 2.0 ^ RND_Rand(-1, 1),
+				--anticavalry = 2.0 ^ RND_Rand(-1, 1),
+			}
+			
+			rates.armor_add = {
+				melee = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
+				fire = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
+				ranged = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
+				truedamage = 3.0 ^ RND_Rand(0, 4.0) * RND_Chance(0.25) + 10.0 ^ RND_Rand(-2.2, 2.2) * RND_Chance(0.12),
+			}
+
+			rates.health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 1.0)
+			rates.sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2)
+			
+			local costmult = 1.0
+			-- tiny bit of balancing
+			if not econ_building and not wonder_or_landmark and not worker and not house and not wall then
+				-- multiply by 0.8x - 1.2x for health balancing
+				costmult = costmult * (1 + math.log(rates.health_maximum_modifier, 10) * 0.2)
+				
+				-- armor balancing
+				if unit then
+					costmult = costmult * math.min(1.05, (1 + math.log(rates.armor.melee, 2) * 0.05))
+					costmult = costmult * math.min(1.05, 1 + rates.armor_add.melee/600)
+				end
+				if not unit then
+					costmult = costmult * math.min(1.05, (1 + math.log(rates.armor.fire, 2) * 0.05))
+					costmult = costmult * math.min(1.05, 1 + rates.armor_add.fire/600)
+				end
+				costmult = costmult * math.min(1.05, (1 + math.log(rates.armor.ranged, 2) * 0.05))
+				costmult = costmult * math.min(1.05, 1 + rates.armor_add.ranged/600)
+				
+				costmult = costmult * math.min(1.05, (1 + math.log(rates.armor.truedamage, 2) * 0.05))
+				costmult = costmult * math.min(1.05, 1 + rates.armor_add.truedamage/600)
+				
+				-- sight range balancing
+				costmult = costmult * math.max(0.95, math.min(1.05, math.sqrt(rates.sight_radius_modifier)))
+			end
+
+			
+			
+			
 			
 			if econ_building or wonder_or_landmark then
 				rates.cost_multiplier = {
@@ -399,11 +451,11 @@ function RND_ApplyBonus(bps)
 				}
 			else
 				rates.cost_multiplier = {
-					food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-					wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.015),
-					gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
-					stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
-					olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.035),
+					food = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.05)),
+					wood = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.015)),
+					gold = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
+					stone = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
+					olive_oil = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
 				}
 			end
 			
@@ -418,7 +470,7 @@ function RND_ApplyBonus(bps)
 				
 
 			if not worker and not wall then
-				if econ_building or house then
+				if econ_building or house or wonder_or_landmark then
 					-- less variance in economic buildings or housing
 					rates.cost_additive = {
 						food = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
@@ -447,16 +499,7 @@ function RND_ApplyBonus(bps)
 				}
 			end
 
-			rates.armor = {
-				melee = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
-				fire = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
-				ranged = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
-				--truedamage = 2.0 ^ RND_Rand(-1, 1),
-				--anticavalry = 2.0 ^ RND_Rand(-1, 1),
-			}
-
-			rates.health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 1.0)
-			rates.sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2)
+			
 
 			if unit then
 				if worker then
@@ -504,6 +547,12 @@ function RND_ApplyBonus(bps)
 				RND_ApplyMod(player.id, ebp, "armor_scalar_for_melee_damage", rates.armor.melee)
 				RND_ApplyMod(player.id, ebp, "armor_scalar_for_ranged_damage", rates.armor.ranged)
 				RND_ApplyMod(player.id, ebp, "armor_scalar_for_fire_damage", rates.armor.fire)
+				RND_ApplyMod(player.id, ebp, "armor_scalar_for_truedamage_damage", rates.armor.truedamage)
+				
+				RND_ApplyModAdditive(player.id, ebp, "armor_scalar_for_melee_damage", rates.armor_add.melee)
+				RND_ApplyModAdditive(player.id, ebp, "armor_scalar_for_ranged_damage", rates.armor_add.ranged)
+				RND_ApplyModAdditive(player.id, ebp, "armor_scalar_for_fire_damage", rates.armor_add.fire)
+				RND_ApplyModAdditive(player.id, ebp, "armor_scalar_for_truedamage_damage", rates.armor_add.truedamage)
 				
 				--RND_ApplyMod(player.id, ebp, "armor_scalar_for_anticavalry_damage", rates.armor.anticavalry)
 				--RND_ApplyMod(player.id, ebp, "armor_scalar_for_truedamage_damage", rates.armor.truedamage)
