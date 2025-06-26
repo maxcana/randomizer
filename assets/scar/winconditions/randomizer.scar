@@ -75,6 +75,7 @@ RND_BP_ECON_BUILDING = "economy_building"
 RND_BP_WALL = "wall"
 RND_BP_HOUSE = "house"
 RND_BP_WONDERS_AND_LANDMARKS = "wonder"
+RND_BP_FARM = "farm"
 
 RND_OPTIONS = {
 	win = { -- win conditions
@@ -157,18 +158,19 @@ function RND_PreInit()
 	-- doesn't work properly
 	--RND_ApplyBonusToResourceDep(BP_GetEntityBlueprintsWithType(RND_BP_GAIA))
 	
+	--MARK: Weapons
 	for _, wpn_name in pairs(listOfAllWeapons) do
 		local rates = {
-			damage = 2.0 ^ RND_Rand(-1.0, 1.0),
+			damage = 2.0 ^ RND_Rand(-2, 2),
 			--accuracy = RND_Rand(0.5, 1.5),
 			range = 2.0 ^ RND_Rand(-1.5, 1.5),
-			atk_time_mult = RND_Rand(RND_Rand(0.0, 0.1), RND_Rand(1.5, 2.0)),
+			atk_time_mult = RND_Rand(RND_Rand(0.0, 0.03), RND_Rand(1.2, 1.7)),
 			burst_rate = 2.0 ^ RND_Rand(-1.5, 2.5),
-			siege_setup = RND_Rand(0.0, 2.0),
-			bonus_dmg_vs_type = 2.0 ^ RND_Rand(-3, 3) + 2.0 ^ RND_Rand(-4, 4) * RND_Chance(0.1)
+			siege_setup = RND_Rand(0.0, 1.6),
+			bonus_dmg_vs_type = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1)
 		}
-		if RND_Chance(0.02) == 1 then
-			rates.atk_time_mult = RND_Rand(0.0, 0.2)
+		if RND_Chance(0.03) == 1 then
+			rates.atk_time_mult = RND_Rand(0.0, 0.15)
 		end
 		local bp = BP_GetWeaponBlueprint(wpn_name)
 		for _, player in pairs(PLAYERS) do
@@ -313,6 +315,7 @@ function RND_Start()
 end
 
 -- Randomizes upgrades
+--MARK: Upgrades
 function RND_ApplyUpgradeBonus(bps)
 	for _, ubp in pairs(bps) do
 		local rates = {
@@ -349,6 +352,7 @@ end
 
 RND_MODIFIERS = { }
 
+--MARK: Ebps
 -- Randomizes ebps
 function RND_ApplyBonus(bps)
 	for _, ebp in pairs(bps) do 
@@ -363,11 +367,12 @@ function RND_ApplyBonus(bps)
 			local wall = Entity_IsEBPOfType(ebp, RND_BP_WALL)
 			local house = Entity_IsEBPOfType(ebp, RND_BP_HOUSE)
 			local wonder_or_landmark = Entity_IsEBPOfType(ebp, RND_BP_WONDERS_AND_LANDMARKS)
+			local farm = Entity_IsEBPOfType(ebp, RND_BP_FARM)
 		
 			local rates = {}
 
 			-- Set up rates
-			if tc then
+			if tc or wonder_or_landmark then
 				rates.production_speed_modifier = 2.0 ^ RND_Rand(-0.2, 0.2)
 			else
 				rates.production_speed_modifier = 10.0 ^ RND_Rand(-0.7, 1.2) + 5 * RND_Chance(0.1)
@@ -395,21 +400,21 @@ function RND_ApplyBonus(bps)
 			
 			-- truedamage = siege
 			rates.armor = {
-				melee = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
-				fire = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
-				ranged = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 5) * RND_Chance(0.1),
+				melee = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 3) * RND_Chance(0.1),
+				fire = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 3) * RND_Chance(0.1),
+				ranged = 2.0 ^ RND_Rand(-1, 1) + 2.0 ^ RND_Rand(1, 3) * RND_Chance(0.1),
 				truedamage = 2.0 ^ RND_Rand(-1, 1),
 				--anticavalry = 2.0 ^ RND_Rand(-1, 1),
 			}
 			
 			rates.armor_add = {
-				melee = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
-				fire = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
-				ranged = 3.0 ^ RND_Rand(0, 3.5) * RND_Chance(0.22) + 10.0 ^ RND_Rand(-2, 2) * RND_Chance(0.1),
-				truedamage = 3.0 ^ RND_Rand(0, 4.0) * RND_Chance(0.25) + 10.0 ^ RND_Rand(-2.2, 2.2) * RND_Chance(0.12),
+				melee = RND_Rand(0, 20) * RND_Chance(0.18) + 10.0 ^ RND_Rand(-2, 1.9) * RND_Chance(0.1),
+				fire = RND_Rand(0, 30) * RND_Chance(0.18) + 10.0 ^ RND_Rand(-2, 1.9) * RND_Chance(0.1),
+				ranged = RND_Rand(0, 10) * RND_Chance(0.18) + 10.0 ^ RND_Rand(-2, 1.9) * RND_Chance(0.1),
+				truedamage = RND_Rand(0, 40) * RND_Chance(0.18) + 10.0 ^ RND_Rand(-2, 1.9) * RND_Chance(0.14),
 			}
 
-			rates.health_maximum_modifier = 10.0 ^ RND_Rand(-1.0, 1.0)
+			rates.health_maximum_modifier = 5.0 ^ RND_Rand(-1.0, 1.0)
 			rates.sight_radius_modifier = RND_Rand(0.1, 2.0) + RND_Rand(0.0, 2.5) * RND_Chance(0.2)
 			
 			local costmult = 1.0
@@ -441,21 +446,21 @@ function RND_ApplyBonus(bps)
 			
 			
 			
-			if econ_building or wonder_or_landmark then
+			if econ_building or house or wonder_or_landmark or farm then
 				rates.cost_multiplier = {
-					food = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.05),
-					wood = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.015),
-					gold = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
-					stone = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
-					olive_oil = RND_Rand(0.1, 2.0) + RND_Rand(2.0, 4.0) * RND_Chance(0.035),
+					food = RND_Rand(0.1, 1.6) + RND_Rand(0.0, 2.0) * RND_Chance(0.03),
+					wood = RND_Rand(0.1, 1.6) + RND_Rand(0.0, 2.0) * RND_Chance(0.02),
+					gold = RND_Rand(0.1, 1.6) + RND_Rand(0.0, 2.0) * RND_Chance(0.02),
+					stone = RND_Rand(0.1, 1.6) + RND_Rand(0.0, 2.0) * RND_Chance(0.015),
+					olive_oil = RND_Rand(0.1, 1.5) + RND_Rand(0.0, 1.9) * RND_Chance(0.02),
 				}
 			else
 				rates.cost_multiplier = {
-					food = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.05)),
-					wood = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.015)),
-					gold = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
-					stone = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
-					olive_oil = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(3.0, 7.0) * RND_Chance(0.035)),
+					food = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(1.0, 3.0) * RND_Chance(0.03)),
+					wood = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(1.0, 3.0) * RND_Chance(0.02)),
+					gold = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(1.0, 3.0) * RND_Chance(0.02)),
+					stone = costmult * (RND_Rand(0.1, 2.0) + RND_Rand(1.0, 3.0) * RND_Chance(0.015)),
+					olive_oil = costmult * (RND_Rand(0.1, 1.8) + RND_Rand(1.0, 2.5) * RND_Chance(0.02)),
 				}
 			end
 			
@@ -463,14 +468,10 @@ function RND_ApplyBonus(bps)
 				rates.cost_multiplier.food = RND_Rand(0.8, 1.2)
 				rates.production_speed_modifier = rates.cost_multiplier.food
 			end
-			
-			if house then
-				rates.cost_multiplier.wood = RND_Rand(0.1, 2.0)
-			end
 				
 
 			if not worker and not wall then
-				if econ_building or house or wonder_or_landmark then
+				if econ_building or house or wonder_or_landmark or farm then
 					-- less variance in economic buildings or housing
 					rates.cost_additive = {
 						food = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15),
@@ -481,15 +482,15 @@ function RND_ApplyBonus(bps)
 					}
 				else
 					rates.cost_additive = {
-						food = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-						wood = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-						gold = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
-						stone = math.floor(10.0 ^ RND_Rand(0.0, 2.5)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.035),
+						food = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.025),
+						wood = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.025),
+						gold = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.15) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.025),
+						stone = math.floor(10.0 ^ RND_Rand(0.0, 2)) * RND_Chance(0.1) + math.floor(10.0 ^ RND_Rand(0.0, 3.0)) * RND_Chance(0.02),
 						olive_oil = 0,
 					}
 				end
 			else
-				-- dont add cost to villagers or segmented buildings
+				-- dont add cost to villagers or segmented buildings (walls)
 				rates.cost_additive = {
 					food = 0,
 					wood = 0,
@@ -503,9 +504,9 @@ function RND_ApplyBonus(bps)
 
 			if unit then
 				if worker then
-					rates.speed_maximum_modifier = 1.15 ^ RND_Rand(-2.0, 2.0)
+					rates.speed_maximum_modifier = 1.125 ^ RND_Rand(-2.0, 2.0)
 				else
-					rates.speed_maximum_modifier = 2.0 ^ RND_Rand(-2.0, 2.0)
+					rates.speed_maximum_modifier = 1.5 ^ RND_Rand(-2.0, 2.0)
 				end
 				rates.acceleration_modifier = rates.speed_maximum_modifier
 			end
