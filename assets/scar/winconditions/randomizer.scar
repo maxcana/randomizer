@@ -320,16 +320,16 @@ function RND_ApplyUpgradeBonus(bps)
 	for _, ubp in pairs(bps) do
 		local rates = {
 			cost_multiplier = {
-				food = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-				wood = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-				gold = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
-				stone = RND_Rand(0.1, 2.0) + RND_Rand(3.0, 9.0) * RND_Chance(0.05),
+				food = RND_Rand(0.1, 2.0) + RND_Rand(1.0, 6.0) * RND_Chance(0.05),
+				wood = RND_Rand(0.1, 2.0) + RND_Rand(1.0, 6.0) * RND_Chance(0.05),
+				gold = RND_Rand(0.1, 2.0) + RND_Rand(1.0, 6.0) * RND_Chance(0.05),
+				stone = RND_Rand(0.1, 2.0) + RND_Rand(1.0, 6.0) * RND_Chance(0.05),
 			},
 			cost_additive = {
-				food = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
-				wood = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
-				gold = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
-				stone = math.floor(10.0 ^ RND_Rand(0.0, 3.2)) * RND_Chance(0.1),
+				food = math.floor(10.0 ^ RND_Rand(0.0, 2.6)) * RND_Chance(0.1),
+				wood = math.floor(10.0 ^ RND_Rand(0.0, 2.6)) * RND_Chance(0.1),
+				gold = math.floor(10.0 ^ RND_Rand(0.0, 2.6)) * RND_Chance(0.1),
+				stone = math.floor(10.0 ^ RND_Rand(0.0, 2.6)) * RND_Chance(0.1),
 			},
 			production_speed_modifier = RND_Rand(RND_Rand(0.0, 0.5), 2.0) + 5 * RND_Chance(0.15)
 		}
