@@ -3,24 +3,24 @@
   <RootPanel Orientation="Horizontal">
     <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="300" FloatingWidth="300" FloatingHeight="800" FloatingLeft="200" FloatingTop="200">
       <LayoutAnchorablePane DockHeight="200" FloatingWidth="300" FloatingHeight="800" FloatingLeft="200" FloatingTop="200">
-        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Asset Explorer" IsSelected="True" ContentId="EssenceEditor.AssetExplorer" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="05/24/2025 21:31:44" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Asset Explorer" IsSelected="True" ContentId="EssenceEditor.AssetExplorer" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="07/08/2025 10:22:54" PreviousContainerId="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" PreviousContainerIndex="1" />
       </LayoutAnchorablePane>
     </LayoutAnchorablePaneGroup>
     <LayoutPanel Orientation="Vertical">
       <LayoutDocumentPaneGroup Orientation="Horizontal">
         <LayoutDocumentPane Id="ab966aed-6c02-4905-b35d-6ed87d2902b9" DockWidth="1.44799176107106*">
           <LayoutDocument Title="Render" ContentId="EssenceEditor.Render" LastActivationTimeStamp="05/24/2025 20:38:50" />
-          <LayoutDocument Title="randomizer.scar" ContentId="FileName|Script|assets\scar\winconditions\randomizer.scar" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.scar" LastActivationTimeStamp="06/26/2025 12:52:28" />
+          <LayoutDocument Title="randomizer.scar" ContentId="FileName|Script|assets\scar\winconditions\randomizer.scar" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\scar\winconditions\randomizer.scar" LastActivationTimeStamp="07/19/2025 15:03:39" />
           <LayoutDocument Title="randomizer.rdo" ContentId="Reflect|Essence.Editor.ReflectEditor.Controls.DefaultReflectControlActivator|0x44BB783C1CA5FA44" LastActivationTimeStamp="06/04/2025 19:07:09" />
           <LayoutDocument Title="mod.png" ContentId="FileName|Image|assets\mod.png" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\mod.png" LastActivationTimeStamp="05/24/2025 20:38:47" />
           <LayoutDocument Title="mod.rdo" ContentId="Reflect|Essence.Editor.ReflectEditor.Controls.DefaultReflectControlActivator|0xA14E66B42569AB1B" LastActivationTimeStamp="05/24/2025 20:38:56" />
           <LayoutDocument Title="randomizer.locdb" ContentId="FileName|LocDB|assets\locdb\randomizer.locdb" ToolTip="C:\Users\mcana\Documents\Age Of Empires IV Mods\randomizer\assets\locdb\randomizer.locdb" LastActivationTimeStamp="06/04/2025 16:49:01" />
-          <LayoutDocument Title="Data.sga" ContentId="FileName|Archive|D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives\Data.sga" ToolTip="D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives\Data.sga" LastActivationTimeStamp="06/04/2025 18:55:24" />
-          <LayoutDocument Title="ebps" IsSelected="True" IsLastFocusedDocument="True" ContentId="Category|ebps" LastActivationTimeStamp="06/26/2025 12:54:19" />
+          <LayoutDocument Title="Data.sga" IsSelected="True" IsLastFocusedDocument="True" ContentId="FileName|Archive|D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives\Data.sga" ToolTip="D:\SteamLibrary\steamapps\common\Age of Empires IV\cardinal\archives\Data.sga" LastActivationTimeStamp="07/19/2025 15:41:06" />
+          <LayoutDocument Title="ebps" ContentId="Category|ebps" LastActivationTimeStamp="07/19/2025 14:31:57" />
         </LayoutDocumentPane>
       </LayoutDocumentPaneGroup>
       <LayoutAnchorablePane Id="1b84d0aa-3fd1-4781-909d-fa3e4b760d6d" Name="anchorablesPane" DockHeight="300">
-        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Output" IsSelected="True" ContentId="Output" LastActivationTimeStamp="06/17/2025 15:45:56" />
+        <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Output" IsSelected="True" ContentId="Output" LastActivationTimeStamp="07/19/2025 14:58:06" />
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Error List" ContentId="ErrorList" LastActivationTimeStamp="06/17/2025 15:11:46" />
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Object Browser" ContentId="ScenarioEditor.ObjectBrowser" LastActivationTimeStamp="07/28/2020 09:55:15" />
         <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Find Results 1" ContentId="FindResults" LastActivationTimeStamp="05/21/2025 15:46:37" />
@@ -45,7 +45,7 @@
   <BottomSide />
   <FloatingWindows />
   <Hidden>
-    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Transformation" IsSelected="True" ContentId="ScenarioEditor.Transformation" FloatingLeft="200" FloatingTop="200" FloatingWidth="250" FloatingHeight="300" LastActivationTimeStamp="06/26/2025 12:52:28" PreviousContainerId="78c06263-eb86-40c1-8abf-6d89a3781df0" PreviousContainerIndex="0" />
-    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Painter" IsSelected="True" ContentId="ScenarioEditor.Painter" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="06/26/2025 12:52:28" PreviousContainerId="9fa6a278-3f40-4922-887c-23981b219ae4" PreviousContainerIndex="1" />
+    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Transformation" IsSelected="True" ContentId="ScenarioEditor.Transformation" FloatingLeft="200" FloatingTop="200" FloatingWidth="250" FloatingHeight="300" LastActivationTimeStamp="07/19/2025 14:31:31" PreviousContainerId="78c06263-eb86-40c1-8abf-6d89a3781df0" PreviousContainerIndex="0" />
+    <LayoutAnchorable AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Painter" IsSelected="True" ContentId="ScenarioEditor.Painter" FloatingLeft="200" FloatingTop="200" FloatingWidth="300" FloatingHeight="800" LastActivationTimeStamp="07/19/2025 14:31:31" PreviousContainerId="9fa6a278-3f40-4922-887c-23981b219ae4" PreviousContainerIndex="1" />
   </Hidden>
 </LayoutRoot>
