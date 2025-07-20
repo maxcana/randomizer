@@ -1,0 +1,36 @@
+(I) [16:36:48.846] [000004380]: Measurement initial_setup started
+(I) [16:36:48.846] [000004380]: Measurement initial_setup finished
+(I) [16:36:48.846] [000004380]: Measurement RND_OnGameSetup started
+(I) [16:36:48.848] [000004380]: Measurement RND_OnGameSetup finished
+
+(I) [16:36:54.538] [000011648]: Measurement RND_PreInit: Resources, Population started
+(I) [16:36:54.538] [000011648]: Measurement RND_PreInit: Resources, Population finished
+(I) [16:36:54.538] [000011648]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class started
+(I) [16:36:54.540] [000011648]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class finished
+(I) [16:36:54.540] [000011648]: Found 2264 Buildings, workers, units
+(I) [16:36:54.540] [000011648]: Measurement RND_PreInit: Buildings, Workers, Unit Class started
+(I) [16:37:03.920] [000011648]: Measurement RND_PreInit: Buildings, Workers, Unit Class finished
+(I) [16:37:03.920] [000011648]: Measurement RND_PreInit: Weapons started
+(I) [16:37:10.416] [000011648]: Measurement RND_PreInit: Weapons finished
+(I) [16:37:10.423] [000011648]: Unregistering module DynastyUI
+(I) [16:37:10.425] [000011648]: Measurement Creating 10000 modifiers started
+(I) [16:37:11.180] [000011648]: Measurement Creating 10000 modifiers finished
+(I) [16:37:11.180] [000011648]: Measurement Applying 10000 modifiers started
+(I) [16:37:11.283] [000011648]: Measurement Applying 10000 modifiers finished
+(I) [16:37:11.283] [000011648]: Measurement Creating and Applying 10000 modifiers started
+(I) [16:37:12.387] [000011648]: Measurement Creating and Applying 10000 modifiers finished
+(I) [16:37:12.387] [000011648]: Measurement Checking if ebp is of type 10000 times started
+(I) [16:37:12.390] [000011648]: Measurement Checking if ebp is of type 10000 times finished
+(I) [16:37:12.390] [000011648]: Measurement Calling random 1000000 times started
+(I) [16:37:12.489] [000011648]: Measurement Calling random 1000000 times finished
+(I) [16:37:12.489] [000011648]: Measurement Calling random 1000000 times started
+(I) [16:37:12.567] [000011648]: Measurement Calling random 1000000 times finished
+(I) [16:37:12.567] [000011648]: Measurement RND_OnInit: Upgrades started
+(I) [16:37:12.568] [000011648]: Found 932 ubps
+(I) [16:37:18.193] [000011648]: Measurement RND_OnInit: Upgrades finished
+(I) [16:37:19.459] [000011648]: Measurement RND_Start: Gaia(Resource Deposits) started
+(I) [16:37:19.460] [000011648]: Measurement RND_Start: Gaia(Resource Deposits) finished
+(I) [16:37:19.460] [000011648]: RND_Rand was called 1108249 times
+(I) [16:37:19.460] [000011648]: RND_Chance was called 1066016times
+
+total: 24.922s

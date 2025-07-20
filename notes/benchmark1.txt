@@ -1,0 +1,21 @@
+
+(I) [15:59:36.932] [000020968]: Measurement initial_setup started
+(I) [15:59:36.932] [000020968]: Measurement initial_setup finished
+(I) [15:59:36.932] [000020968]: Measurement RND_OnGameSetup started
+(I) [15:59:36.934] [000020968]: Measurement RND_OnGameSetup finished
+
+(I) [16:00:10.817] [000020484]: Measurement RND_PreInit: Resources, Population started
+(I) [16:00:10.817] [000020484]: Measurement RND_PreInit: Resources, Population finished
+(I) [16:00:10.817] [000020484]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class started
+(I) [16:00:10.819] [000020484]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class finished
+(I) [16:00:10.819] [000020484]: Found 2264 Buildings, Workers, Unit Class
+(I) [16:00:10.819] [000020484]: Measurement RND_PreInit: Buildings, Workers, Unit Class started
+(I) [16:00:20.057] [000020484]: Measurement RND_PreInit: Buildings, Workers, Unit Class finished
+(I) [16:00:20.057] [000020484]: Measurement RND_PreInit: Weapons started
+(I) [16:00:26.744] [000020484]: Measurement RND_PreInit: Weapons finished
+(I) [16:00:26.750] [000020484]: Measurement RND_OnInit: Upgrades started
+(I) [16:00:32.578] [000020484]: Measurement RND_OnInit: Upgrades finished
+(I) [16:00:34.021] [000020484]: Measurement RND_Start: Gaia(Resource Deposits) started
+(I) [16:00:34.023] [000020484]: Measurement RND_Start: Gaia(Resource Deposits) finished
+
+total: 23.206 seconds

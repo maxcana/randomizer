@@ -1,0 +1,29 @@
+(I) [17:15:55.668] [000016048]: Measurement initial_setup started
+(I) [17:15:55.668] [000016048]: Measurement initial_setup finished
+(I) [17:15:55.669] [000016048]: Measurement RND_OnGameSetup started
+(I) [17:15:55.670] [000016048]: Measurement RND_OnGameSetup finished
+
+(I) [17:16:06.732] [000019892]: Measurement RND_PreInit: Resources, Population started
+(I) [17:16:06.733] [000019892]: Measurement RND_PreInit: Resources, Population finished
+(I) [17:16:06.733] [000019892]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class started
+(I) [17:16:06.735] [000019892]: Measurement RND_PreInit: Finding All Buildings, Workers, Unit Class finished
+(I) [17:16:06.735] [000019892]: Found 2264 Buildings, workers, units
+(I) [17:16:06.735] [000019892]: Measurement RND_PreInit: Buildings, Workers, Unit Class started
+(I) [17:16:09.540] [000019892]: Measurement RND_PreInit: Buildings, Workers, Unit Class finished
+(I) [17:16:09.540] [000019892]: Measurement RND_PreInit: Weapons started
+(I) [17:16:10.785] [000019892]: Measurement RND_PreInit: Weapons finished
+(I) [17:16:10.794] [000019892]: Measurement Doing rates calculation 5000 times started
+(I) [17:16:10.844] [000019892]: Measurement Doing rates calculation 5000 times finished
+(I) [17:16:10.844] [000019892]: Measurement Doing rates calculation 5000 times without complicated balancing started
+(I) [17:16:10.892] [000019892]: Measurement Doing rates calculation 5000 times without complicated balancing finished
+(I) [17:16:10.892] [000019892]: Measurement RND_OnInit: Upgrades started
+(I) [17:16:10.893] [000019892]: Found 932 ubps
+(I) [17:16:11.888] [000019892]: Measurement RND_OnInit: Upgrades finished
+(I) [17:16:13.108] [000019892]: Measurement RND_Start: Gaia(Resource Deposits) started
+(I) [17:16:13.109] [000019892]: Measurement RND_Start: Gaia(Resource Deposits) finished
+(I) [17:16:13.109] [000019892]: RND_Rand was called 528210 times
+(I) [17:16:13.109] [000019892]: RND_Chance was called 325994times
+(I) [17:16:13.109] [000019892]: 69944 modifiers were created
+(I) [17:16:13.109] [000019892]: 559552 modifiers were applied
+
+total: 6.377s
